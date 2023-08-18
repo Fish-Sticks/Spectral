@@ -1,0 +1,145 @@
+Credits:
+	Source: MOS Technology MCS6500 Microprocessors Preliminary Datasheet (May 1976)
+	Source 2: The Western Digital Center Inc W65C02S Datasheet
+	( Most useful IMO ) Source 3: https://www.masswerk.at/6502/6502_instruction_set.html
+
+Helpful resources:
+	Compiler and visualizer: https://www.masswerk.at/6502/assembler.html
+	Guide to 6502 instruction set: https://skilldrick.github.io/easy6502/
+
+
+Instruction set:
+
+ADC Add Memory Co Accumulator with Carry DEC Decrement Memory by One PHA Push Accumulator on Stack	
+AND "AND" Memory with Accumulator DEX Decrement Index X bv One PHP Push Processor Status on Stack
+ASL Shift left One Bit (Memory or Accumul.a cor) DEY Decrement Index Y by One PLA Pull Accumulator from Stack
+PLP Pull Processor Status from Stack
+BCC Branch on Carry Clear EOR "Exclusive-or" Memory with Accumulator
+BCS Branch on Carry Set ROL Rotate One Bit Left (Memory or Accumulator)
+BEQ Branch on Result Zero INC Increment Memory by One ROR Rotate One Bit Right (Memory or Accumulator)
+BIT Test Bits in Memory with Accumulator INX Increment Index X by One RTI Return from Interrupt
+BM1 Branch on Result Minus INY Increment Index Y by One RTS Return from Subroutine
+BNE Branch on Result not Zero
+BPL Branch on Result Plus JMP Jump to New Location SBC Subtract Memory from Accumulator with Borrow
+BRK Force Break JSR Jump to New Location Saving Return Address SEC Set Carry Flag
+BVC Branch on Overflow Clear SED Set Decimal Mode
+BVS Branch on Overflow Set LDA Load Accumulator with Memory SEI Set Interrupt Disable Status
+LDX Load Index X with Memory STA Store Accumulator in Memory
+CLC Clear Carry Flag LDY Load Index Y with Memory STX Store Index X in Memory
+CLD Clear Decimal Mode LSR Shift One Bit Right (Memory or Accumulator) STY Store Index Y in Memory
+CLI Clear Interrupt Disable Bit
+CLV Clear Overflow Flag NOP No Operation TAX Transfer Accumulator to Index X
+CMP Compare Memory and Accumulator TAY Transfer Accumulator to Index Y
+CPX Compare Memory and Index X ORA "OR Memory with Accumulator TSX Transfer Stack Pointer to Index X
+CPY Compare Memory and Index Y TXA Transfer Index X to Accumulator
+TXS Transfer Index X to Stack Pointer
+TYA Transfer Index Y to Accumulator
+
+Address modes (In depth, page 15):
+
+ACCUMULATOR ADDRESSING - This-form of addressing is represented with a one byte instruction, implying an
+operation on the accumulator.
+
+IMMEDIATE ADDRESSING - In immediate addressing, the operand is contained in the second byte of the instruction,
+with no further memory addressing required.
+
+ABSOLUTE ADDRESSING - In absolute addressing, the second byte of the instruction specifies the eight low order
+bits of the effective address while the third byte specifies the eight high order bits. Thus, the
+absolute addressing mode allows access to the entire 65K bytes of addressable memory.
+
+ZERO PAGE ADDRESSING - The zero page instructions allow for shorter code and execution times by only fetching
+the second byte of the instruction and assuming a zero high address byte. Careful use of the zero
+page can result in significant increase in code efficiency.
+
+INDEXED ZERO PAGE ADDRESSING - (X, Y indexing) - This form of addressing is used in conjunction with the index
+register and is referred to as "Zero Page, X" or "Zero Page, Y". The effective address is calculated
+by adding the second byte to the contents of the index register. Since this is a form of "Zero Page"
+. addressing, the content of the second byte references a location in page zero. Additionally due to
+the "Zero Page" addressing nature of this mode, no carry is added to the high order 8 bits of memory
+and crossing of page boundaries does not occur.
+
+INDEXED ABSOLUTE ADDRESSING - (X, Y indexing) - This form of addressing is used in conjunction with X and Y
+index register and is referred to as "Absolute, X", and "Absolute, Y". The effective address is
+formed by adding the contents of X or Y to the address contained in the second and third bytes of the
+instruction. This mode allows the index register to contain the index or count value and the in¬
+struction to contain the base address. This type of indexing allows any location referencing and
+the index to modify multiple fields resulting in reduced coding and execution time.
+
+IMPLIED ADDRESSING - In the implied addressing mode, the address containing the operand is implicitly stated
+in the operation code of the instruction.
+
+RELATIVE ADDRESSING - Relative addressing is used only with branch instructions and establishes a destination
+for the conditional branch.
+The second byte of the instruction becomes the operand which is an "Offset" added to the contents of
+the lower eight bits of the program counter when the counter is set at the next instruction. The
+range of the offset is -128 to +127 bytes from the ne''t instruction.
+
+INDEXED INDIRECT ADDRESSING - In indexed indirect addressing (referred to as (Indirect,X)), the second byte of
+the instruction is added to the contents of the X index register, discarding the carry. The result
+of this addition points to a memory location on page zero whose contents is the low order eight bits
+of the effective address. The next memory location in page zero contains the high order eight bits
+of the effective address. Both memory locations specifying the high and low order bytes of the
+effective address must be in page zero.
+
+INDIRECT INDEXED ADDRESSING - In indirect indexed addressing (referred to as (Indirect),Y), the second byte
+of the instruction points to a memory location in page zero. The contents of this memory location
+is added to the contents of the Y index register, the result being the low order eight bits of the
+effective address. The carry from this addition is added to the contents of the next page zero
+memory location, the result being the high order eight bits of the effective address.
+
+ABSOLUTE INDIRECT - The second byte of the instruction contains the low order eight bits of a memory location.
+The high order eight bits of that memory location is contained in the third byte of the instruction.
+The contents of the fully specified memory location is the low order byte of the effective address.
+The next memory location contains the high order byte of the effective address which is loaded
+into the sixteen bits of the program counter.
+
+
+Registers:
+	ACCUMULATOR - AC (8 bits)
+	INDEX REGISTER - Y (8 bits)
+	INDEX REGISTER - X (8 bits)
+	PROGRAM COUNTER - PC (16 bits, high << 8 | low)
+	STACK POINTER - SP (8 bit)
+	PROCESSOR STATUS REG - SR (8 bits, NEGATIVE, OVERFLOW, UNDOCUMENTED, BRK COMMAND, DECIMAL MODE, IRQ DISABLE, ZERO, CARRY) | NV-BDIZC
+
+Limitations / Specs:
+	* 65K Addressable Bytes of Memory
+	* IRQ Interrupt * NMI Interrupt
+	* On-the-chip Clock
+		/ TTL Level Single Phase Input
+		/ RC Time Base Input
+		/ Crystal Time Base Input
+	* SYNC Signal
+		(can be used for single instruction execution)
+	* RDY Signal
+		(can be used for single cycle execution)
+	* Two Phase Output Clock for Timing of Support Chips
+
+
+Memory data:
+	Memory location $fe contains a new random byte on every instruction.
+	Memory location $ff contains the ascii code of the last key pressed.
+
+	Memory locations $200 to $5ff map to the screen pixels. Different values will
+	draw different colour pixels. The colours are:
+
+	$0: Black
+	$1: White
+	$2: Red
+	$3: Cyan
+	$4: Purple
+	$5: Green
+	$6: Blue
+	$7: Yellow
+	$8: Orange
+	$9: Brown
+	$a: Light red
+	$b: Dark grey
+	$c: Grey
+	$d: Light green
+	$e: Light blue
+	$f: Light grey
+
+
+Test source codes:
+http://www.6502.org/source/
