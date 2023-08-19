@@ -5,7 +5,7 @@ Emulator and compiler for 6502
 Welcome to Spectral! Spectral is a project I've been working on which includes a 6502 emulator written in modern C++ (SpectralEmu), and a Lua -> 6502 assembly compiler (Unnamed).
 
 ## Pre-built Binaries
-If you don't want to compile SpectralEmu yourself, pre-built binaries are available **[here]()**
+If you don't want to compile SpectralEmu yourself, pre-built binaries are available **[here](https://github.com/Fish-Sticks/Spectral/releases/latest)**
 
 ## How do I get started?
 Compile SpectralEmu with Visual Studio 2022, if you don't want to use VS22 you can retarget the project, I will not be explaining that here.
