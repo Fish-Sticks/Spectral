@@ -344,7 +344,7 @@ void vm_context_t::run_vm()
 			this->PC = (this->SR_flags.V ? operand : this->PC);
 			break;
 
-		// Interrupts and mics
+		// Interrupts and misc
 		case BRK: // IMPLEMENT INTERRUPTS LATER.
 			this->SR_flags.B = true;
 			break;
