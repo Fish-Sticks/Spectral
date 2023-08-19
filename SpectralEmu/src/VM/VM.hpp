@@ -11,10 +11,8 @@ private:
 	// Set flags for comparisons
 	void set_comparison_flags(std::uint8_t compared_against, std::uint8_t operand);
 public:
-	bool initialized = false;
-
 	// Setup virtual machine to prepare for execution
-	void setup_vm(const std::string& machine_code);
+	void setup_vm(const std::string& machine_code, std::size_t base_address = 0);
 
 	// Clear VM and free resources.
 	void clear_vm();
@@ -22,13 +20,12 @@ public:
 	// Dump VM context
 	void dump_ctx();
 
-	// Start VM and run it (if initialized)
+	// Start VM and run it (if initialized), this will preform a "reset"
 	void run_vm();
 
 	std::unique_ptr<memory_manager_t> memory_manager{};
-	std::string machine_code{};
-	std::string memory_block{};
 
+	bool initialized = false; // Make sure all resources are allocated before launching the VM
 	std::uint16_t PC = 0;	// Program counter
 	std::uint8_t SP = 0;	// Stack pointer
 	std::uint8_t AC = 0;	// Accumulator
@@ -43,7 +40,7 @@ public:
 			std::uint8_t I : 1; // Interrupt (IRQ disable)
 			std::uint8_t D : 1; // Decimal (use BCD for arithmetics)
 			std::uint8_t B : 1; // Break
-			std::uint8_t _ : 1; // ignored ( possibly replace with initialized? )
+			std::uint8_t _ : 1; // Unused
 			std::uint8_t V : 1; // Overflow
 			std::uint8_t N : 1; // Negative
 		} SR_flags;

@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <unordered_map>
 
-
 // This is for helping with machine code translation for my emulators virtual machine.
 namespace information
 {
@@ -60,6 +59,7 @@ namespace information
 	};
 
 	// Every "legal" instruction (illegal instructions AREN'T POSSIBLE ON THIS CPU.)
+	// Yes, this should be a switch case on the enum instead of manually encoding every string in the struct, I will do that later once the bigger stuff is done.
 	std::unordered_map<std::uint8_t, const instruction_t> opcode_map =
 	{
 		{0x00, {BRK, impl, "BRK"}}, {0x01, {ORA, X_idx_ind, "ORA"}}, {0x05, {ORA, zp, "ORA"}}, {0x06, {ASL, zp, "ASL"}}, {0x08, {PHP, impl, "PHP"}}, {0x09, {ORA, imm, "ORA"}}, {0x0A, {ASL, acc, "ASL"}}, {0x0D, {ORA, abs, "ORA"}}, {0x0E, {ASL, abs, "ASL"}}, {0x10, {BPL, rel, "BPL"}}, {0x11, {ORA, ind_Y_idx, "ORA"}},

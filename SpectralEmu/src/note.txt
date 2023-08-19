@@ -143,3 +143,65 @@ Memory data:
 
 Test source codes:
 http://www.6502.org/source/
+
+
+
+MORE INFORMATION:
+zero and negative flag
+	These flags are always updated, whenever a value is transferred to a CPU register
+
+	as a result of any logical ALU operations
+
+	The Z and N flags are also updated by increment and decrement operations acting on a memory location.
+
+
+The carry flag (C) flag is used as a buffer and as a borrow in arithmetic operations. 
+Any comparisons will update this additionally to the Z and N flags, as do shift and rotate operations.
+
+
+All arithmetic operations update the Z, N, C and V flags.
+
+if both operands are of the same sign. Then, the result must be also of the same sign. Otherwise, overflow is detected and the overflow flag is set.
+an overflow can never occur when the operands are of opposite sign, since the result will never exceed this range.
+
+The decimal flag (D) sets the ALU to binary coded decimal (BCD) mode for additions and subtractions (ADC, SBC).
+
+The interrupt inhibit flag (I) blocks any maskable interrupt requests (IRQ).
+
+
+Any of these flags (but the break flag) may be set or cleared by dedicated instructions. Moreover, there are branch instructions to conditionally divert the control flow depending on the respective state of the Z, N, C or V flag.
+
+MEMORY SPACES:
+
+STACK: LIFO, top-down, 8 bit range, 0x0100 - 0x01FF
+
+PUSH ELEMENT ONE
+PUSH ELEMENT TWO
+PUSH ELEMENT THREE
+POP	 ( pops elemnet three), grows down
+
+
+
+$FFFA, $FFFB ... NMI (Non-Maskable Interrupt) vector, 16-bit (LB, HB)
+$FFFC, $FFFD ... RES (Reset) vector, 16-bit (LB, HB)
+$FFFE, $FFFF ... IRQ (Interrupt Request) vector, 16-bit (LB, HB)
+
+
+
+Start/Reset Operations
+An active-low reset line allows to hold the processor in a known disabled
+state, while the system is initialized. As the reset line goes high, the
+processor performs a start sequence of 7 cycles, at the end of which the
+program counter (PC) is read from the address provided in the 16-bit reset
+vector at $FFFC (LB-HB). Then, at the eighth cycle, the processor transfers
+control by performing a JMP to the provided address.
+Any other initializations are left to the thus executed program. (Notably,
+instructions exist for the initialization and loading of all registers, but
+for the program counter, which is provided by the reset vector at $FFFC.)
+
+
+
+loading roms:
+	load rom into memory, have my resolver map it correctly
+	initialize CPU reset state
+	run code

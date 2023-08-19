@@ -1,26 +1,23 @@
 #include "VM.hpp"
 #include "6502/logic.hpp"
 
-void vm_context_t::setup_vm(const std::string& machine_code)
+void vm_context_t::setup_vm(const std::string& machine_code, std::size_t base_address)
 {
-	this->machine_code = machine_code;
-	this->memory_block.resize(0xFFFF, 0);
 	this->memory_manager = std::make_unique<memory_manager_t>();
+	this->memory_manager->load_rom(machine_code, base_address);
+	this->SP = 0xFF;
+	this->PC = this->memory_manager->RES;
 	this->initialized = true;
 }
 
 void vm_context_t::clear_vm()
 {
-	this->machine_code.clear();
-	this->memory_block.clear();
-
 	this->PC = 0;
 	this->SR = 0;
+	this->SP = 0;
 	this->AC = 0;
 	this->X = 0;
 	this->Y = 0;
-	this->SP = 0;
-	this->initialized = false;
 }
 
 void vm_context_t::dump_ctx()
@@ -59,16 +56,14 @@ void vm_context_t::set_comparison_flags(std::uint8_t compared_against, std::uint
 	}
 }
 
-// TODO: Convert over from a "code" stream into a pre-computed memory space just like how it is for real this way programs are truly running themselves.
-// Right now it's just "faking it" by reading a data stream with no address access.
 void vm_context_t::run_vm()
 {
 	using namespace information;
 
 	if (!this->initialized)
 		throw std::exception("The VM is not initialized!");
-
-	std::string code = this->machine_code;
+	
+	memory_manager_t& memory = *this->memory_manager;
 
 	while (true)
 	{
@@ -82,54 +77,58 @@ void vm_context_t::run_vm()
 			break;
 		}
 
-		const instruction_t current_ins = opcode_map[code[this->PC++]]; // Increment PC and get current instruction
+		std::uint16_t original_PC = this->PC;
+		const instruction_t current_ins = opcode_map[memory[this->PC++]]; // Increment PC and get current instruction
 		std::uint16_t operand = 0; // Copy value which is to be written back, 16 bits because it CAN be an address too, operations on registers will ALWAYS be 8 bits so no worry there.
+		bool is_op_acc = false;
 
 		// Decode operand, the meaning of this is in 6502/logic.hpp
-		// Problem: std::string is using signed data, i might need make my own datatype so data is handled correctly.
 		switch (current_ins.flag)
 		{
 			case acc:
-				std::printf("ACC triggered but not implemented!\n");
+				is_op_acc = true;
 				break;
 			case flag_t::abs: // fuck STL
-				operand = code[this->PC++] | (code[this->PC++] << 8);
+				operand = memory.read_16(this->PC++);
+				this->PC++;
 				break;
 			case abs_X_idx:
-				operand = code[this->PC++] | (code[this->PC++] << 8) + this->X;
+				operand = memory.read_16(this->PC++) + this->X;
+				this->PC++;
 				break;
 			case abs_Y_idx:
-				operand = code[this->PC++] | (code[this->PC++] << 8) + this->Y;
+				operand = memory.read_16(this->PC++) + this->Y;
+				this->PC++;
 				break;
 			case imm:
-				operand = static_cast<std::uint8_t>(code[this->PC++]);
+				operand = memory[this->PC++];
 				break;
 			case impl:
 				operand = -1; // "-1" = IMPLICIT MODE ( helps for debugging hence why not 0, operand won't be used anyways ) 
 				break;
 			case ind:
 			{
-				std::uint16_t address = static_cast<std::uint8_t>(code[this->PC++]) | static_cast<std::uint8_t>((code[this->PC++] << 8));
-				operand = *reinterpret_cast<std::uint16_t*>(&this->memory_block[address]);
+				operand = memory.read_address_16(this->PC++);
+				this->PC++;
 				break;
 			}
 			case X_idx_ind:
-				std::printf("X_idx_ind triggered but not implemented!\n");
+				operand = memory.read_address_16(memory[this->PC++] + this->X);
 				break;
 			case ind_Y_idx:
-				std::printf("ind_Y_idx triggered but not implemented!\n");
+				operand = memory.read_address_16(memory[this->PC++], this->Y);
 				break;
 			case rel:
-				operand = this->PC + static_cast<signed char>(code[this->PC++]);
+				operand = this->PC + static_cast<std::int8_t>(memory[this->PC++]); // +-127 bytes
 				break;
 			case zp: // unlike immediate this is 16 bits (for memory reasons ig) but this only sets low byte
-				operand = static_cast<std::uint8_t>(code[this->PC++]);
+				operand = memory[this->PC++];
 				break;
 			case zp_idx_X:
-				std::printf("zp_idx_X triggered but not implemented!\n");
+				operand = memory[this->PC++] + this->X;
 				break;
 			case zp_idx_Y:
-				std::printf("zp_idx_Y triggered but not implemented!\n");
+				operand = memory[this->PC++] + this->Y;
 				break;
 			default:
 				std::printf("Invalid instruction flag: %d\n", current_ins.flag);
@@ -137,16 +136,16 @@ void vm_context_t::run_vm()
 				break;
 		}
 
-		std::printf("Executing instruction: %s | Operand: 0x%04X\n", current_ins.name, static_cast<std::uint16_t>(operand));
+		std::printf("[0x%04X] | Executing instruction: %s | Operand: 0x%04X\n", original_PC, current_ins.name, static_cast<std::uint16_t>(operand));
 
 		switch (current_ins.op)
 		{
 		// Accumulator operations
 		case CMP:
-			this->set_comparison_flags(this->AC, operand);
+			this->set_comparison_flags(this->AC, static_cast<std::uint8_t>(operand));
 			break;
 		case STA:
-			this->memory_block[operand] = this->AC;
+			memory[operand] = this->AC;
 			break;
 		case LDA:
 			this->AC = static_cast<std::uint8_t>(operand);
@@ -158,18 +157,18 @@ void vm_context_t::run_vm()
 			this->AC = this->Y;
 			break;
 		case ADC:
-		{
-			std::uint8_t old_ac = this->AC; // used for overflow check
 			this->AC += operand;
 			break;
-		}
+		case SBC:
+			this->AC -= operand;
+			break;
 
 		// X operations
 		case CPX:
-			this->set_comparison_flags(this->X, operand);
+			this->set_comparison_flags(this->X, static_cast<std::uint8_t>(operand));
 			break;
 		case STX:
-			this->memory_block[operand] = this->X;
+			memory[operand] = this->X;
 			break;
 		case LDX:
 			this->X = static_cast<std::uint8_t>(operand);
@@ -184,18 +183,18 @@ void vm_context_t::run_vm()
 			this->SP = this->X;
 			break;
 		case INX:
-			this->X++;
+			++this->X;
 			break;
 		case DEX:
-			this->X--;
+			--this->X;
 			break;
 
 		// Y operations
 		case CPY:
-			this->set_comparison_flags(this->Y, operand);
+			this->set_comparison_flags(this->Y, static_cast<std::uint8_t>(operand));
 			break;
 		case STY:
-			this->memory_block[operand] = this->Y;
+			memory[operand] = this->Y;
 			break;
 		case LDY:
 			this->Y = static_cast<std::uint8_t>(operand);
@@ -204,15 +203,119 @@ void vm_context_t::run_vm()
 			this->Y = this->AC;
 			break;
 		case INY:
-			this->Y++;
+			++this->Y;
 			break;
 		case DEY:
-			this->Y--;
+			--this->Y;
 			break;
 
-		// CF operations
+		// Stack operations
+		case PHA:
+			memory.stack[this->SP--] = this->AC;
+			break;
+		case PLA:
+			this->AC = memory.stack[++this->SP];
+			break;
+		case PHP:
+			memory.stack[this->SP--] = this->SR | (1 << 4) | (1 << 5); // with break flag and bit 5 set, idk why yet... fix later
+			break;
+		case PLP:
+			this->SR = memory.stack[++this->SP] & ~((1 << 4) | (1 << 5)); // with break flag and bit 5 ignored
+			break;
+
+		// logical operations
+		case AND:
+			this->AC &= operand;
+			break;
+		case EOR:
+			this->AC ^= operand;
+			break;
+		case ORA:
+			this->AC |= operand;
+			break;
+		case ASL:
+			if (is_op_acc)
+				this->AC <<= 1;
+			else
+				memory[operand] <<= 1;
+			break;
+		case LSR:
+			if (is_op_acc)
+				this->AC >>= 1;
+			else
+				memory[operand] >>= 1;
+			break;
+		case ROL:
+		{
+			std::uint8_t old_carry = this->SR_flags.C;
+			if (is_op_acc)
+			{
+				this->SR_flags.C = (this->AC >> 7) & 1;
+				this->AC = (this->AC << 1) | old_carry;
+			}
+			else
+			{
+				this->SR_flags.C = (memory[operand] >> 7) & 1;
+				memory[operand] = (memory[operand] << 1) | old_carry;
+			}
+			break;
+		}
+		case ROR:
+		{
+			std::uint8_t old_carry = this->SR_flags.C;
+			if (is_op_acc)
+			{
+				this->SR_flags.C = this->AC & 1;
+				this->AC = (this->AC >> 1) | (old_carry << 7);
+			}
+			else
+			{
+				this->SR_flags.C = memory[operand] & 1;
+				memory[operand] = (memory[operand] >> 1) | (old_carry << 7);
+			}
+			break;
+		}
+		case INC:
+			++memory[operand];
+			break;
+		case DEC:
+			--memory[operand];
+			break;
+
+		// Funky flags
+		case CLC:
+			this->SR_flags.C = false;
+			break;
+		case CLD:
+			this->SR_flags.D = false;
+			break;
+		case CLI:
+			this->SR_flags.I = false;
+			break;
+		case CLV:
+			this->SR_flags.V = false;
+			break;
+		case SEC:
+			this->SR_flags.C = true;
+			break;
+		case SED:
+			this->SR_flags.D = true;
+			break;
+		case SEI:
+			this->SR_flags.I = true;
+			break;
+
+		// JMPS & SUBROUTINES
 		case JMP:
 			this->PC = operand;
+			break;
+		case JSR: // NOTE: PC is already at the next instruction.
+			memory.stack[this->SP--] = static_cast<std::uint8_t>(this->PC >> 8); // High byte
+			memory.stack[this->SP--] = static_cast<std::uint8_t>(this->PC); // Low byte
+			this->PC = operand;
+			break;
+		case RTS:
+			this->PC = memory.stack[++this->SP] | (memory.stack[++this->SP] << 8);
 			break;
 
 		// Branch operations
@@ -241,12 +344,20 @@ void vm_context_t::run_vm()
 			this->PC = (this->SR_flags.V ? operand : this->PC);
 			break;
 
-		// Exit operations
+		// Interrupts and mics
 		case BRK: // IMPLEMENT INTERRUPTS LATER.
 			this->SR_flags.B = true;
 			break;
-		case RTS:
-			this->SR_flags.B = true; // Quit the VM
+		case RTI:
+			std::printf("RTI isn't implemented yet!\n");
+			break;
+		case NOP:
+			// NOPE.
+			break;
+		case BIT:
+			this->SR_flags.V = (operand >> 6) & 1;
+			this->SR_flags.N = (operand >> 7) & 1;
+			this->SR_flags.Z = (this->AC & operand) == 0;
 			break;
 		default:
 			std::printf("Invalid instruction ran: 0x%02X\n", current_ins.op);
