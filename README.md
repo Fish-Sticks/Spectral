@@ -1,5 +1,5 @@
 # Spectral
-Emulator and compiler for 6502
+Emulator and compiler for 6502 created with **modern C++**
 
 ## Welcome
 Welcome to Spectral! Spectral is a project I've been working on which includes a 6502 emulator written in modern C++ (SpectralEmu), and a Lua -> 6502 assembly compiler (Unnamed).<br>
