@@ -71,16 +71,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)src\dependencies\luau\Ast\include;$(ProjectDir)src\dependencies\luau\CodeGen\include;$(ProjectDir)src\dependencies\luau\Compiler\include;$(ProjectDir)src\dependencies\luau\Common\include;$(ProjectDir)src\dependencies\luau\VM\include;$(ProjectDir)src\dependencies\luau\VM\src;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src\dependencies\luau\Ast\include;$(ProjectDir)src\dependencies\luau\Compiler\include;$(ProjectDir)src\dependencies\luau\Common\include;$(ProjectDir)src\dependencies\luau\VM\include;$(ProjectDir)src\dependencies\luau\VM\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)src\dependencies\luau\Ast\include;$(ProjectDir)src\dependencies\luau\CodeGen\include;$(ProjectDir)src\dependencies\luau\Compiler\include;$(ProjectDir)src\dependencies\luau\Common\include;$(ProjectDir)src\dependencies\luau\VM\include;$(ProjectDir)src\dependencies\luau\VM\src;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src\dependencies\luau\Ast\include;$(ProjectDir)src\dependencies\luau\Compiler\include;$(ProjectDir)src\dependencies\luau\Common\include;$(ProjectDir)src\dependencies\luau\VM\include;$(ProjectDir)src\dependencies\luau\VM\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)src\dependencies\luau\Ast\include;$(ProjectDir)src\dependencies\luau\CodeGen\include;$(ProjectDir)src\dependencies\luau\Compiler\include;$(ProjectDir)src\dependencies\luau\Common\include;$(ProjectDir)src\dependencies\luau\VM\include;$(ProjectDir)src\dependencies\luau\VM\src;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src\dependencies\luau\Ast\include;$(ProjectDir)src\dependencies\luau\Compiler\include;$(ProjectDir)src\dependencies\luau\Common\include;$(ProjectDir)src\dependencies\luau\VM\include;$(ProjectDir)src\dependencies\luau\VM\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)src\dependencies\luau\Ast\include;$(ProjectDir)src\dependencies\luau\CodeGen\include;$(ProjectDir)src\dependencies\luau\Compiler\include;$(ProjectDir)src\dependencies\luau\Common\include;$(ProjectDir)src\dependencies\luau\VM\include;$(ProjectDir)src\dependencies\luau\VM\src;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src\dependencies\luau\Ast\include;$(ProjectDir)src\dependencies\luau\Compiler\include;$(ProjectDir)src\dependencies\luau\Common\include;$(ProjectDir)src\dependencies\luau\VM\include;$(ProjectDir)src\dependencies\luau\VM\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -151,36 +151,6 @@
     <ClCompile Include="src\dependencies\luau\Ast\src\Parser.cpp" />
     <ClCompile Include="src\dependencies\luau\Ast\src\StringUtils.cpp" />
     <ClCompile Include="src\dependencies\luau\Ast\src\TimeTrace.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\AssemblyBuilderA64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\AssemblyBuilderX64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\CodeAllocator.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\CodeBlockUnwind.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\CodeGen.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\CodeGenA64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\CodeGenAssembly.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\CodeGenUtils.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\CodeGenX64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\EmitBuiltinsX64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\EmitCommonX64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\EmitInstructionX64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrAnalysis.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrBuilder.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrCallWrapperX64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrDump.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrLoweringA64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrLoweringX64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrRegAllocA64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrRegAllocX64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrTranslateBuiltins.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrTranslation.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrUtils.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\IrValueLocationTracking.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\lcodegen.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\NativeState.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\OptimizeConstProp.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\OptimizeFinalX64.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\UnwindBuilderDwarf2.cpp" />
-    <ClCompile Include="src\dependencies\luau\CodeGen\src\UnwindBuilderWin.cpp" />
     <ClCompile Include="src\dependencies\luau\Compiler\src\BuiltinFolding.cpp" />
     <ClCompile Include="src\dependencies\luau\Compiler\src\Builtins.cpp" />
     <ClCompile Include="src\dependencies\luau\Compiler\src\BytecodeBuilder.cpp" />
@@ -234,49 +204,6 @@
     <ClInclude Include="src\dependencies\luau\Ast\include\Luau\ParseResult.h" />
     <ClInclude Include="src\dependencies\luau\Ast\include\Luau\StringUtils.h" />
     <ClInclude Include="src\dependencies\luau\Ast\include\Luau\TimeTrace.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\luacodegen.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\AddressA64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\AssemblyBuilderA64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\AssemblyBuilderX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\CodeAllocator.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\CodeBlockUnwind.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\CodeGen.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\ConditionA64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\ConditionX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\IrAnalysis.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\IrBuilder.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\IrCallWrapperX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\IrData.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\IrDump.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\IrRegAllocX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\IrUtils.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\Label.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\OperandX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\OptimizeConstProp.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\OptimizeFinalX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\RegisterA64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\RegisterX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\UnwindBuilder.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\UnwindBuilderDwarf2.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\include\Luau\UnwindBuilderWin.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\BitUtils.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\ByteUtils.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\CodeGenA64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\CodeGenLower.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\CodeGenUtils.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\CodeGenX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\EmitBuiltinsX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\EmitCommon.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\EmitCommonA64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\EmitCommonX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\EmitInstructionX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\IrLoweringA64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\IrLoweringX64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\IrRegAllocA64.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\IrTranslateBuiltins.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\IrTranslation.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\IrValueLocationTracking.h" />
-    <ClInclude Include="src\dependencies\luau\CodeGen\src\NativeState.h" />
     <ClInclude Include="src\dependencies\luau\Common\include\Luau\Bytecode.h" />
     <ClInclude Include="src\dependencies\luau\Common\include\Luau\BytecodeUtils.h" />
     <ClInclude Include="src\dependencies\luau\Common\include\Luau\Common.h" />
