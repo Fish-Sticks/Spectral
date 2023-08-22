@@ -41,7 +41,7 @@ void vm_context_t::dump_ctx()
 void vm_context_t::set_comparison_flags(std::uint8_t compared_against, std::uint8_t operand)
 {
 	std::uint8_t result = compared_against - operand;
-	this->SR_flags.N = result & (1 << 7);
+	this->SR_flags.N = (result >> 7) & 1;
 
 	if (compared_against < operand || compared_against > operand)
 	{
@@ -54,6 +54,12 @@ void vm_context_t::set_comparison_flags(std::uint8_t compared_against, std::uint
 		this->SR_flags.C = true;
 		this->SR_flags.N = false;
 	}
+}
+
+void vm_context_t::set_arith_flags(std::uint8_t result)
+{
+	this->SR_flags.Z = result == 0;
+	this->SR_flags.N = (result >> 7) & 1;
 }
 
 void vm_context_t::run_vm()
@@ -183,10 +189,10 @@ void vm_context_t::run_vm()
 			this->SP = this->X;
 			break;
 		case INX:
-			++this->X;
+			this->set_arith_flags(this->X++);
 			break;
 		case DEX:
-			--this->X;
+			this->set_arith_flags(this->X--);
 			break;
 
 		// Y operations
@@ -203,10 +209,10 @@ void vm_context_t::run_vm()
 			this->Y = this->AC;
 			break;
 		case INY:
-			++this->Y;
+			this->set_arith_flags(this->Y++);
 			break;
 		case DEY:
-			--this->Y;
+			this->set_arith_flags(this->Y--);
 			break;
 
 		// Stack operations

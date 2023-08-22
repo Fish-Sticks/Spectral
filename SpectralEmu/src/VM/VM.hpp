@@ -8,8 +8,11 @@
 struct vm_context_t
 {
 private:
-	// Set flags for comparisons
+	// Set flags for comparisons Any comparisons will update C, Z and N flags, as do shift and rotate operations.
 	void set_comparison_flags(std::uint8_t compared_against, std::uint8_t operand);
+
+	// Set flags for arithmetic logic | These flags are always updated, whenever a value is transferred to a CPU register (A,X,Y) and as a result of any logical ALU operations.
+	void set_arith_flags(std::uint8_t result);
 public:
 	// Setup virtual machine to prepare for execution
 	void setup_vm(const std::string& machine_code, std::size_t base_address = 0);
